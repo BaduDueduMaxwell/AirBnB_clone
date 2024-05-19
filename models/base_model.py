@@ -3,6 +3,7 @@
 
 import uuid
 import datetime
+from models.base_model import BaseModel
 
 class BaseModel:
     """defines all common attributes/methods for the other classes"""
