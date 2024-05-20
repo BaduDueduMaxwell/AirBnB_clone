@@ -3,7 +3,6 @@
 
 import unittest
 from datetime import datetime, timedelta
-from models.base_model import BaseModel
 
 class TestBaseModel(unittest.TestCase):
     def setUp(self):
