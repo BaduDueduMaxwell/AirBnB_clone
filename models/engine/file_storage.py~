@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+import json
+
+
+class FileStorage:
+    __file_path = 'file_json'
+    __objects = {}
+
+    def all(self):
+        """
+        Returns:
+            dict: Returns the dictionary of all objects stored.
+        """
+        return self.__objects
+
+    def new(self, obj):
+        """
+        Adds a new object to the __objects dictionary.
+
+        Args:
+            obj: The object to be added.
+        """
