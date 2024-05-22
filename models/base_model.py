@@ -24,8 +24,8 @@ class BaseModel:
             for key, value in kwargs.items():
                 if key != '__class__':
                     if key == 'created_at' or key == 'updated_at':
-                        setattr(\
-                self, key, datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f"))
+                        setattr(self, key, datetime.strptime(value, \
+                                                "%Y-%m-%dT%H:%M:%S.%f"))
                     else:
                         setattr(self, key, value)
         else:
@@ -37,8 +37,8 @@ class BaseModel:
         """
         Returns a string representation of the BaseModel object.
         """
-        return "[{}] ({}) {}".format(self.__class__.__name__, \
-                                self.id, self.__dict__)
+        return "[{}] ({}) {}".format\
+            (self.__class__.__name__, self.id, self.__dict__)
 
     def save(self):
         """
@@ -57,7 +57,6 @@ class BaseModel:
         obj_dict['updated_at'] = self.updated_at.isoformat()
         return obj_dict
 
-
 if __name__ == "__main__":
     my_model = BaseModel()
     my_model.name = "My_First_Model"
@@ -70,8 +69,8 @@ if __name__ == "__main__":
     print(my_model_json)
     print("JSON of my_model:")
     for key in my_model_json.keys():
-        print("\t{}: ({}) - {}".format(key, type(my_model_json[key]), \
-                                       my_model_json[key]))
+        print("\t{}: ({}) - {}".format\
+              (key, type(my_model_json[key]), my_model_json[key]))
 
     print("--")
     my_new_model = BaseModel(**my_model_json)
