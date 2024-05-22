@@ -7,5 +7,9 @@ class TestAmenity(unittest.TestCase):
         amenity = Amenity()
         self.assertEqual(amenity.name, "")
 
+    def test_create_amenity(self):
+        amenity = Amenity()
+        self.assertIsInstance(amenity, Amenity)
+
 if __name__ == "__main__":
     unittest.main()

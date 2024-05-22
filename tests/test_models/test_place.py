@@ -17,5 +17,9 @@ class TestPlace(unittest.TestCase):
         self.assertEqual(place.longitude, 0.0)
         self.assertEqual(place.amenity_ids, [])
 
+    def test_create_place(self):
+        place = Place()
+        self.assertIsInstance(place, Place)
+        
 if __name__ == "__main__":
     unittest.main()

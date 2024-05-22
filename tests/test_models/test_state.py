@@ -7,5 +7,9 @@ class TestState(unittest.TestCase):
         state = State()
         self.assertEqual(state.name, "")
 
+    def test_create_city(self):
+        city = City()
+        self.assertIsInstance(city, City)
+
 if __name__ == "__main__":
     unittest.main()

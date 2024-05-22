@@ -9,5 +9,9 @@ class TestReview(unittest.TestCase):
         self.assertEqual(review.user_id, "")
         self.assertEqual(review.text, "")
 
+    def test_create_place(self):
+        place = Place()
+        self.assertIsInstance(place, Place)
+        
 if __name__ == "__main__":
     unittest.main()

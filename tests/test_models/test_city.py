@@ -8,5 +8,9 @@ class TestCity(unittest.TestCase):
         self.assertEqual(city.state_id, "")
         self.assertEqual(city.name, "")
 
+    def test_create_city(self):
+        city = City()
+        self.assertIsInstance(city, City)
+
 if __name__ == "__main__":
     unittest.main()
