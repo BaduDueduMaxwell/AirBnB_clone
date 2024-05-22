@@ -21,6 +21,7 @@ class BaseModel:
         """
         Returns a string representation of the BaseModel object.
         """
+        print(f"Debug: {self.__class__.__name__}, {self.id}, {self.__dict__}")
         return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
 
     def save(self):
