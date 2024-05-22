@@ -11,17 +11,33 @@ class BaseModel:
     def __init__(self):
         """
         Initializes a new instance of the BaseModel class.
-        Assigns a unique id using uuid.uuid4() and sets created_at and updated_at to the current datetime.
+        If kwargs is not empty:
+            - Each key-value pair in kwargs represents an attribute name \
+              and its value.
+            - id and created_at are created as in the previous \
+              implementation.
+        Otherwise:
+            - id and created_at are generated as in the previous \
+              implementation.
         """
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if kwargs:
+            for key, value in kwargs.items():
+                if key != '__class__':
+                    if key == 'created_at' or key == 'updated_at':
+                        setattr(self, key, datetime.strptime(\
+                                                             value, "%Y-%m-%dT%H:%M:%S.%f"))
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = self.created_at
+
 
     def __str__(self):
         """
         Returns a string representation of the BaseModel object.
         """
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, \
+                                     self.__dict__)
 
     def save(self):
         """
