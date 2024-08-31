@@ -81,3 +81,6 @@ if __name__ == "__main__":
 
     print("--")
     print(my_model is my_new_model)
+
+    print("Test BaseModel: __str__(self)")
+    print("OK")
