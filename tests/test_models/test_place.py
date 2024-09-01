@@ -1,9 +1,17 @@
-#!/usr/python3
+#!/usr/bin/python3
 import unittest
 from models.place import Place
+from models.base_model import BaseModel
 
 class TestPlace(unittest.TestCase):
-    def test_attributes(self):
+    """Test cases for the Place class."""
+
+    def test_is_subclass(self):
+        """Test that Place is a subclass of BaseModel."""
+        self.assertTrue(issubclass(Place, BaseModel))
+
+    def test_class_attributes(self):
+        """Test default values for Place class attributes."""
         place = Place()
         self.assertEqual(place.city_id, "")
         self.assertEqual(place.user_id, "")
@@ -17,9 +25,5 @@ class TestPlace(unittest.TestCase):
         self.assertEqual(place.longitude, 0.0)
         self.assertEqual(place.amenity_ids, [])
 
-    def test_create_place(self):
-        place = Place()
-        self.assertIsInstance(place, Place)
-        
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
