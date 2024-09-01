@@ -37,7 +37,7 @@ class FileStorage:
         with open(FileStorage.__file_path, 'w') as file:
             json.dump(obj_dict, file)
 
-def reload(self):
+    def reload(self):
         """Deserializes the JSON file to __objects (if exists)"""
         if exists(FileStorage.__file_path):
             with open(FileStorage.__file_path, 'r') as file:
