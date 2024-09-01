@@ -1,19 +1,18 @@
 #!/usr/bin/python3
 """Defines the HBnB console"""
 
-
 import cmd
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage, classes
-
+import sys
 
 class HBNBCommand(cmd.Cmd):
     """Simple command processor example for the HBNB project."""
     
     prompt = '(hbnb) '
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, stdout=sys.stdout, stdin=sys.stdin):
+        super().__init__(stdout=stdout, stdin=stdin)
         self.storage = FileStorage()
         self.storage.reload()
         self.classes = classes
@@ -74,11 +73,11 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        if key not in models.storage.all():
+        if key not in self.storage.all():
             print("** no instance found **")
             return
-        del models.storage.all()[key]
-        models.storage.save()
+        del self.storage.all()[key]
+        self.storage.save()
 
     def do_all(self, arg):
         """Prints all string representations of all instances."""
