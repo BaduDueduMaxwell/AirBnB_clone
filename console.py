@@ -114,12 +114,26 @@ class HBNBCommand(cmd.Cmd):
 
         obj = self.storage.all()[key]
         attr_name = args[2]
-        attr_value = args[3].strip('"')
-        
-        # Update the attribute if it's not id, created_at, or updated_at
+        attr_value = args[3]
+
+        # Safely handle attribute assignment without eval
         if attr_name not in ['id', 'created_at', 'updated_at']:
-            setattr(obj, attr_name, eval(attr_value))
-            obj.save()
+            try:
+                # Try to interpret the attribute value as an integer or float if possible
+                if attr_value.isdigit():
+                    attr_value = int(attr_value)
+                else:
+                    try:
+                        attr_value = float(attr_value)
+                    except ValueError:
+                        # If not a number, treat as a string
+                        attr_value = attr_value.strip('"').strip("'")
+
+                setattr(obj, attr_name, attr_value)
+                obj.save()
+            except Exception as e:
+                print(f"** Error setting attribute: {e} **")
+
 
 
 if __name__ == '__main__':
