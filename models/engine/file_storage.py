@@ -40,11 +40,14 @@ class FileStorage:
     def reload(self):
         """Deserializes the JSON file to __objects (if exists)"""
         if exists(FileStorage.__file_path):
-            with open(FileStorage.__file_path, 'r') as file:
-                obj_dict = json.load(file)
-                from models.base_model import BaseModel
-                for obj_data in obj_dict.values():
-                    class_name = obj_data["__class__"]
-                    if class_name == "BaseModel":
-                        obj = BaseModel(**obj_data)
-                        self.new(obj)
+            try:
+                with open(FileStorage.__file_path, 'r') as file:
+                    obj_dict = json.load(file)
+                    for obj_data in obj_dict.values():
+                        class_name = obj_data.get("__class__")
+                        cls = classes.get(class_name)
+                        if cls:
+                            obj = cls(**obj_data)
+                            self.new(obj)
+            except (IOError, json.JSONDecodeError) as e:
+                print(f"Error reading or parsing file: {e}")

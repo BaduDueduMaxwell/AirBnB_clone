@@ -7,7 +7,7 @@ from models.engine.file_storage import FileStorage, classes
 import sys
 
 class HBNBCommand(cmd.Cmd):
-    """Simple command processor example for the HBNB project."""
+    """Simple command processor for the HBNB project."""
     
     prompt = '(hbnb) '
 
@@ -31,7 +31,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, arg):
-        """Create a new instance of BaseModel, save it, and print the id."""
+        """Create a new instance of a class, save it, and print the id."""
         if not arg:
             print("** class name missing **")
             return
@@ -55,10 +55,11 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        if key not in self.storage.all():
+        instance = self.storage.all().get(key)
+        if not instance:
             print("** no instance found **")
             return
-        print(self.storage.all()[key])
+        print(instance)
 
     def do_destroy(self, arg):
         """Deletes an instance based on class name and id."""
@@ -82,12 +83,14 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, arg):
         """Prints all string representations of all instances."""
         args = arg.split()
+        all_instances = [str(obj) for obj in self.storage.all().values()]
         if len(args) == 0:
-            print([str(obj) for obj in self.storage.all().values()])
+            print(all_instances)
         elif args[0] not in self.classes:
             print("** class doesn't exist **")
         else:
-            print([str(obj) for key, obj in self.storage.all().items() if key.startswith(args[0])])
+            filtered_instances = [str(obj) for key, obj in self.storage.all().items() if key.startswith(args[0])]
+            print(filtered_instances)
 
     def do_update(self, arg):
         """Updates an instance based on class name and id by adding or updating attribute."""
@@ -133,8 +136,6 @@ class HBNBCommand(cmd.Cmd):
                 obj.save()
             except Exception as e:
                 print(f"** Error setting attribute: {e} **")
-
-
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
