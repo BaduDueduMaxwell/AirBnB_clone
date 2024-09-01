@@ -4,8 +4,8 @@ from os.path import exists
 
 
 classes = {
-    'BaseModel': 'BaseModel',
-    'User': 'User'
+    'BaseModel': BaseModel,
+    'User': User
 }
 
 class FileStorage:
