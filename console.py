@@ -1,8 +1,6 @@
 #!/usr/bin/python3
-"""
-Console for AirBnB project
-"""
-import cmd
+import json
+from os.path import exists
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -10,113 +8,52 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models.engine.file_storage import FileStorage
-import shlex
 
-class HBNBCommand(cmd.Cmd):
-    """Command interpreter for AirBnB"""
-    prompt = "(hbnb) "
-    file_storage = FileStorage()
+classes = {
+    'BaseModel': BaseModel,
+    'User': User,
+    'State': State,
+    'City': City,
+    'Amenity': Amenity,
+    'Place': Place,
+    'Review': Review
+}
 
-    def __init__(self, *args, **kwargs):
-        """Initialize command interpreter"""
-        super().__init__(*args, **kwargs)
-        self.storage = HBNBCommand.file_storage
-        self.storage.reload()
+class FileStorage:
+    __file_path = 'file.json'
+    __objects = {}
 
-    def do_create(self, arg):
-        """Create a new instance of a class"""
-        args = shlex.split(arg)
-        if not args:
-            print("** class name missing **")
-            return
-        if args[0] not in self.storage.classes():
-            print("** class doesn't exist **")
-            return
-        cls = self.storage.classes()[args[0]]
-        new_instance = cls()
-        for i in range(1, len(args), 2):
-            if i + 1 < len(args):
-                setattr(new_instance, args[i], args[i + 1].strip('"'))
-        new_instance.save()
-        print(new_instance.id)
+    def all(self):
+        """
+        Returns:
+            dict: Returns the dictionary of all objects stored.
+        """
+        return FileStorage.__objects
 
-    def do_show(self, arg):
-        """Show an instance of a class"""
-        args = shlex.split(arg)
-        if len(args) < 2:
-            print("** class name or id missing **")
-            return
-        if args[0] not in self.storage.classes():
-            print("** class doesn't exist **")
-            return
-        key = "{}.{}".format(args[0], args[1])
-        if key not in self.storage.all():
-            print("** no instance found **")
-            return
-        print(self.storage.all()[key])
+    def new(self, obj):
+        """
+        Adds a new object to the __objects dictionary.
 
-    def do_destroy(self, arg):
-        """Destroy an instance of a class"""
-        args = shlex.split(arg)
-        if len(args) < 2:
-            print("** class name or id missing **")
-            return
-        if args[0] not in self.storage.classes():
-            print("** class doesn't exist **")
-            return
-        key = "{}.{}".format(args[0], args[1])
-        if key not in self.storage.all():
-            print("** no instance found **")
-            return
-        del self.storage.all()[key]
-        self.storage.save()
+        Args:
+            obj: The object to be added.
+        """
+        key = "{}.{}".format(obj.__class__.__name__, obj.id)
+        FileStorage.__objects[key] = obj
 
-    def do_update(self, arg):
-        """Update an instance of a class"""
-        args = shlex.split(arg)
-        if len(args) < 4:
-            print("** class name, id, or attribute missing **")
-            return
-        if args[0] not in self.storage.classes():
-            print("** class doesn't exist **")
-            return
-        key = "{}.{}".format(args[0], args[1])
-        if key not in self.storage.all():
-            print("** no instance found **")
-            return
-        setattr(self.storage.all()[key], args[2], args[3].strip('"'))
-        self.storage.all()[key].save()
+    def save(self):
+        """Serializes __objects to the JSON file"""
+        obj_dict = {key: obj.to_dict() for key, obj in FileStorage.__objects.items()}
+        with open(FileStorage.__file_path, 'w') as file:
+            json.dump(obj_dict, file)
 
-    def do_all(self, arg):
-        """Show all instances of a class"""
-        args = shlex.split(arg)
-        if args and args[0] not in self.storage.classes():
-            print("** class doesn't exist **")
-            return
-        if args:
-            instances = [str(value) for key, value in self.storage.all().items() if key.startswith(args[0])]
-        else:
-            instances = [str(value) for key, value in self.storage.all().items()]
-        print(instances)
-
-    def do_count(self, arg):
-        """Count the number of instances of a class"""
-        args = shlex.split(arg)
-        if not args or args[0] not in self.storage.classes():
-            print("** class doesn't exist **")
-            return
-        count = sum(1 for key in self.storage.all().keys() if key.startswith(args[0]))
-        print(count)
-
-    def do_quit(self, arg):
-        """Quit the command interpreter"""
-        return True
-
-    def do_EOF(self, arg):
-        """Exit on End Of File"""
-        print()
-        return True
-
-if __name__ == '__main__':
-    HBNBCommand().cmdloop()
+    def reload(self):
+        """Deserializes the JSON file to __objects (if exists)"""
+        if exists(FileStorage.__file_path):
+            with open(FileStorage.__file_path, 'r') as file:
+                obj_dict = json.load(file)
+                for obj_data in obj_dict.values():
+                    class_name = obj_data["__class__"]
+                    if class_name in classes:
+                        cls = classes[class_name]
+                        obj = cls(**obj_data)
+                        self.new(obj)
