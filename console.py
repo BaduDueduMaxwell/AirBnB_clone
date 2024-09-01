@@ -3,11 +3,16 @@
 
 import cmd
 from models.base_model import BaseModel
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 from models.engine.file_storage import FileStorage, classes
 import sys
 
 class HBNBCommand(cmd.Cmd):
-    """Simple command processor for the HBNB project."""
+    """Simple command processor example for the HBNB project."""
     
     prompt = '(hbnb) '
 
@@ -55,11 +60,10 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        instance = self.storage.all().get(key)
-        if not instance:
+        if key not in self.storage.all():
             print("** no instance found **")
             return
-        print(instance)
+        print(self.storage.all()[key])
 
     def do_destroy(self, arg):
         """Deletes an instance based on class name and id."""
@@ -81,16 +85,14 @@ class HBNBCommand(cmd.Cmd):
         self.storage.save()
 
     def do_all(self, arg):
-        """Prints all string representations of all instances."""
+        """Prints all string representations of all instances of a class."""
         args = arg.split()
-        all_instances = [str(obj) for obj in self.storage.all().values()]
         if len(args) == 0:
-            print(all_instances)
+            print([str(obj) for obj in self.storage.all().values()])
         elif args[0] not in self.classes:
             print("** class doesn't exist **")
         else:
-            filtered_instances = [str(obj) for key, obj in self.storage.all().items() if key.startswith(args[0])]
-            print(filtered_instances)
+            print([str(obj) for key, obj in self.storage.all().items() if key.startswith(args[0])])
 
     def do_update(self, arg):
         """Updates an instance based on class name and id by adding or updating attribute."""

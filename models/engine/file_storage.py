@@ -3,11 +3,20 @@ import json
 from os.path import exists
 from models.base_model import BaseModel
 from models.user import User
-
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 classes = {
     'BaseModel': BaseModel,
-    'User': User
+    'User': User,
+    'State': State,
+    'City': City,
+    'Amenity': Amenity,
+    'Place': Place,
+    'Review': Review
 }
 
 class FileStorage:
@@ -40,14 +49,11 @@ class FileStorage:
     def reload(self):
         """Deserializes the JSON file to __objects (if exists)"""
         if exists(FileStorage.__file_path):
-            try:
-                with open(FileStorage.__file_path, 'r') as file:
-                    obj_dict = json.load(file)
-                    for obj_data in obj_dict.values():
-                        class_name = obj_data.get("__class__")
-                        cls = classes.get(class_name)
-                        if cls:
-                            obj = cls(**obj_data)
-                            self.new(obj)
-            except (IOError, json.JSONDecodeError) as e:
-                print(f"Error reading or parsing file: {e}")
+            with open(FileStorage.__file_path, 'r') as file:
+                obj_dict = json.load(file)
+                for obj_data in obj_dict.values():
+                    class_name = obj_data["__class__"]
+                    if class_name in classes:
+                        cls = classes[class_name]
+                        obj = cls(**obj_data)
+                        self.new(obj)
